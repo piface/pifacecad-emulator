@@ -81,7 +81,8 @@ class PiFaceCADEmulatorWindow(QMainWindow, Ui_pifaceCADEmulatorWindow):
 
     def switch_pressed_or_released(self):
         """Need to call registered functions."""
-        print("a switch was pressed/released")
+        # print("a switch was pressed/released")
+        pass
 
     @property
     def switch_state(self):

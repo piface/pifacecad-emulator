@@ -6,24 +6,28 @@ from .gui import (
     get_col_row_from_value,
     get_value_from_col_row
 )
-import pifacecommon
+import pifacecommon.mcp23s17
 from pifacecommon.interrupts import (IODIR_ON, IODIR_OFF, IODIR_BOTH)
 import pifacecad
 
 
 # classes
-class Switch(pifacecad.Switch):
+class Switch(object):
     """An emulated switch on PiFace CAD."""
+    def __init__(self, switch_num, cad):
+        self.switch_num = switch_num
+        self.cad = cad
+
     @property
     def value(self):
-        proc_comms_q_to_em.put(('get_switch', self.switch_num))
-        return proc_comms_q_from_em.get()
+        cad.proc_comms_q_to_em.put(('get_switch', self.switch_num))
+        return cad.proc_comms_q_from_em.get()
 
 
 class SwitchPort(object):
     """An emulated switch port on PiFace CAD."""
-    def __init__(self):
-        self.switches = [Switch(i) for i in range(8)]
+    def __init__(self, cad):
+        self.switches = [Switch(i, cad) for i in range(8)]
 
     @property
     def value(self):
@@ -37,84 +41,68 @@ class SwitchPort(object):
 
 class PiFaceLCD(object):
     """An emulated PiFace CAD LCD."""
+    def __init__(self, cad):
+        self.cad = cad
+
     @property
     def viewport_corner(self):
-        global proc_comms_q_to_em
-        proc_comms_q_to_em.put(('get_viewport_corner', 0))
-        global proc_comms_q_from_em
-        return proc_comms_q_from_em.get()
+        self.cad.proc_comms_q_to_em.put(('get_viewport_corner', 0))
+        return self.cad.proc_comms_q_from_em.get()
 
     @viewport_corner.setter
     def viewport_corner(self, position):
-        global proc_comms_q_to_em
-        proc_comms_q_to_em.put(('set_viewport_corner', position))
+        self.cad.proc_comms_q_to_em.put(('set_viewport_corner', position))
 
     def see_cursor(self):
-        global proc_comms_q_to_em
-        proc_comms_q_to_em.put(('see_cursor', 0))
+        self.cad.proc_comms_q_to_em.put(('see_cursor', 0))
 
     def clear(self):
-        global proc_comms_q_to_em
-        proc_comms_q_to_em.put(('clear', 0))
+        self.cad.proc_comms_q_to_em.put(('clear', 0))
 
     def home(self):
-        global proc_comms_q_to_em
-        proc_comms_q_to_em.put(('home', 0))
+        self.cad.proc_comms_q_to_em.put(('home', 0))
 
     def display_off(self):
-        global proc_comms_q_to_em
-        proc_comms_q_to_em.put(('set_display_enable', 0))
+        self.cad.proc_comms_q_to_em.put(('set_display_enable', 0))
 
     def display_on(self):
-        global proc_comms_q_to_em
-        proc_comms_q_to_em.put(('set_display_enable', 1))
+        self.cad.proc_comms_q_to_em.put(('set_display_enable', 1))
 
     def cursor_off(self):
-        global proc_comms_q_to_em
-        proc_comms_q_to_em.put(('set_cursor_enable', 0))
+        self.cad.proc_comms_q_to_em.put(('set_cursor_enable', 0))
 
     def cursor_on(self):
-        global proc_comms_q_to_em
-        proc_comms_q_to_em.put(('set_cursor_enable', 1))
+        self.cad.proc_comms_q_to_em.put(('set_cursor_enable', 1))
 
     def blink_off(self):
-        global proc_comms_q_to_em
-        proc_comms_q_to_em.put(('set_blink_enable', 0))
+        self.cad.proc_comms_q_to_em.put(('set_blink_enable', 0))
 
     def blink_on(self):
-        global proc_comms_q_to_em
-        proc_comms_q_to_em.put(('set_blink_enable', 1))
+        self.cad.proc_comms_q_to_em.put(('set_blink_enable', 1))
 
     def backlight_off(self):
-        global proc_comms_q_to_em
-        proc_comms_q_to_em.put(('set_backlight_enable', 0))
+        self.cad.proc_comms_q_to_em.put(('set_backlight_enable', 0))
 
     def backlight_on(self):
-        global proc_comms_q_to_em
-        proc_comms_q_to_em.put(('set_backlight_enable', 1))
+        self.cad.proc_comms_q_to_em.put(('set_backlight_enable', 1))
 
     # cursor or display shift
     def move_left(self):
-        global proc_comms_q_to_em
-        proc_comms_q_to_em.put(('move_left', None))
+        self.cad.proc_comms_q_to_em.put(('move_left', None))
 
     def move_right(self):
-        global proc_comms_q_to_em
-        proc_comms_q_to_em.put(('move_right', None))
+        self.cad.proc_comms_q_to_em.put(('move_right', None))
 
     def set_cursor(self, col, row):
-        global proc_comms_q_to_em
         col_row = get_value_from_col_row(col, row)
-        proc_comms_q_to_em.put(('set_cursor', col_row))
+        self.cad.proc_comms_q_to_em.put(('set_cursor', col_row))
 
     def get_cursor(self):
-        global proc_comms_q_to_em
-        proc_comms_q_to_em.put(('get_cursor', 0))
+        self.cad.proc_comms_q_to_em.put(('get_cursor', 0))
         return proc_comms_q_from_em.get()
 
     def write(self, text):
-        global proc_comms_q_to_em
-        proc_comms_q_to_em.put(('set_message', text))
+        self.cad.proc_comms_q_to_em.put(('set_message', text))
         # print("q to em len", proc_comms_q_to_em.qsize())
     # not implemented
     # def left_to_right(self):
@@ -134,21 +122,43 @@ class PiFaceLCD(object):
 class PiFaceCAD(object):
     """An emulated PiFace CAD."""
     def __init__(self):
-        self.switch_port = SwitchPort()
-        self.switches = [Switch(i) for i in range(pifacecad.MAX_SWITCHES)]
-        self.lcd = PiFaceLCD()
+        self.switch_port = SwitchPort(self)
+        self.switches = [Switch(i, self) for i in range(pifacecad.NUM_SWITCHES)]
+        self.lcd = PiFaceLCD(self)
+
+        try:
+            cad = pifacecad.PiFaceCAD()
+        except pifacecommon.core.InitError as e:
+            print("Error initialising PiFace CAD: ", e)
+            print("Running without PiFace CAD.")
+            cad = None
+
+        self.proc_comms_q_to_em = Queue()
+        self.proc_comms_q_from_em = Queue()
+
+        emulator_sync = Barrier(2)
+        # start the gui in another process
+        self.emulator = Process(target=run_emulator,
+                                args=(sys.argv,
+                                      cad,
+                                      self.proc_comms_q_to_em,
+                                      self.proc_comms_q_from_em,
+                                      emulator_sync))
+        self.emulator.start()
 
 
 class SwitchEventListener(object):
     """An emulated Switch event listener"""
     def __init__(self, arg):
-        pass
+        raise NotImplementedError("Switch Interrupts are not implemented in "
+                                  "the emulator.")
 
 
 class IREventListener(object):
     """An emulated IR event listener"""
     def __init__(self, arg):
-        pass
+        raise NotImplementedError("IR Interrupts are not implemented in the "
+                                  "emulator.")
 
 
 def init():

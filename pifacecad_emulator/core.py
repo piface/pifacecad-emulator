@@ -128,7 +128,7 @@ class PiFaceCAD(object):
 
         try:
             cad = pifacecad.PiFaceCAD()
-        except pifacecommon.core.InitError as e:
+        except pifacecommon.spi.SPIInitError as e:
             print("Error initialising PiFace CAD: ", e)
             print("Running without PiFace CAD.")
             cad = None

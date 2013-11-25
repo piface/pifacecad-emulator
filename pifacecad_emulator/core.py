@@ -161,37 +161,35 @@ class IREventListener(object):
                                   "emulator.")
 
 
-def init():
-    try:
-        pifacecad.init()
-        cad = pifacecad.PiFaceCAD()
-    except pifacecommon.core.InitError as e:
-        print("Error initialising PiFace CAD: ", e)
-        print("Running without PiFace CAD.")
-        cad = None
+# def init():
+#     try:
+#         cad = pifacecad.PiFaceCAD()
+#     except pifacecommon.core.InitError as e:
+#         print("Error initialising PiFace CAD: ", e)
+#         print("Running without PiFace CAD.")
+#         cad = None
 
-    global proc_comms_q_to_em
-    global proc_comms_q_from_em
-    proc_comms_q_to_em = Queue()
-    proc_comms_q_from_em = Queue()
+#     global proc_comms_q_to_em
+#     global proc_comms_q_from_em
+#     proc_comms_q_to_em = Queue()
+#     proc_comms_q_from_em = Queue()
 
-    emulator_sync = Barrier(2)
-    # start the gui in another process
-    global emulator
-    emulator = Process(target=run_emulator, args=(
-        sys.argv, cad, proc_comms_q_to_em, proc_comms_q_from_em, emulator_sync
-    ))
-    emulator.start()
-    # print("core: waiting for sync")
-    # # emulator_sync.wait()
-    # assert proc_comms_q_from_em.get() == "setupcomplete"
-    # print("synced")
+#     emulator_sync = Barrier(2)
+#     # start the gui in another process
+#     global emulator
+#     emulator = Process(target=run_emulator, args=(
+#         sys.argv, cad, proc_comms_q_to_em, proc_comms_q_from_em, emulator_sync
+#     ))
+#     emulator.start()
+#     # print("core: waiting for sync")
+#     # # emulator_sync.wait()
+#     # assert proc_comms_q_from_em.get() == "setupcomplete"
+#     # print("synced")
 
 
-def deinit():
-    # stop the gui
-    global proc_comms_q_to_em
-    proc_comms_q_to_em.put(('quit',))
-    global emulator
-    emulator.join()
-    pifacecad.deinit()
+# def deinit():
+#     # stop the gui
+#     global proc_comms_q_to_em
+#     proc_comms_q_to_em.put(('quit',))
+#     global emulator
+#     emulator.join()

@@ -1,0 +1,3 @@
+#!/usr/bin/env python3
+import pifacecad_emulator as emu
+cad = emu.PiFaceCAD()

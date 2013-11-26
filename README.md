@@ -1,6 +1,12 @@
 PiFace Control and Display Emulator
 ===================================
 
+Installation
+------------
+`pifacecad-emulator` is in the Raspbian repositories. Install with:
+
+    $ sudo apt-get update && sudo apt-get install python3-pifacecad-emulator
+
 Development Notes
 -----------------
 Uses Python 3 because of Barrier in threading.
@@ -20,10 +26,3 @@ Otherwise, use just like you would pifacecad:
     >>> import pifacecad_emulator
     >>> cad = pifacecad_emulator.PiFaceCAD()
     >>> cad.lcd.write("hello")
-
-
-Known Issues
-------------
-
-- New line character in write box does not cause new line.
-- New line state is not maintained between CAD and emulator.

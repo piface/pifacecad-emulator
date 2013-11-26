@@ -1,6 +1,11 @@
 Change Log
 ==========
 
+v0.2.2
+------
+- Fixed backlight auto on.
+- Fixed new line bug.
+
 v0.2.1
 ------
 - Fixed init error when not running on Raspberry Pi.

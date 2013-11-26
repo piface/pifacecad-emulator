@@ -25,6 +25,7 @@ ROW_PIXEL = (80, 101)
 LCD_LINES = 2
 LCD_WIDTH = 16
 LCD_RAM_WIDTH = 80
+LCD_ROW_WIDTH = int(80 / 2)
 
 
 class PiFaceCADEmulatorWindow(QMainWindow, Ui_pifaceCADEmulatorWindow):
@@ -143,7 +144,7 @@ class PiFaceCADEmulatorWindow(QMainWindow, Ui_pifaceCADEmulatorWindow):
         else:
             while not self.cursorLabel.isVisible():
                 self._viewport_corner = \
-                    (self._viewport_corner + 1) % LCD_RAM_WIDTH
+                    (self._viewport_corner + 1) % LCD_ROW_WIDTH
                 self.flush_lcd_lines()
                 self.update_cursor_label()
 
@@ -173,7 +174,7 @@ class PiFaceCADEmulatorWindow(QMainWindow, Ui_pifaceCADEmulatorWindow):
     def clear(self):
         if self.cad:
             self.cad.lcd.clear()
-        self.lcd_lines = [" "*LCD_RAM_WIDTH, " "*LCD_RAM_WIDTH]
+        self.lcd_lines = [" "*LCD_ROW_WIDTH, " "*LCD_ROW_WIDTH]
         self.viewport_corner = 0
         self._set_virtual_cursor(0, 0)
 
@@ -183,7 +184,7 @@ class PiFaceCADEmulatorWindow(QMainWindow, Ui_pifaceCADEmulatorWindow):
 
     @viewport_corner.setter
     def viewport_corner(self, value):
-        self._viewport_corner = value % LCD_RAM_WIDTH
+        self._viewport_corner = value % LCD_ROW_WIDTH
         if self.cad:
             self.cad.lcd.viewport_corner = self._viewport_corner
         self.flush_lcd_lines()
@@ -229,7 +230,7 @@ class PiFaceCADEmulatorWindow(QMainWindow, Ui_pifaceCADEmulatorWindow):
         return tuple(self._cursor_position)
 
     def _set_virtual_cursor(self, col, row):
-        row %= LCD_LINES
+        row %= (LCD_LINES - 1)
         self._cursor_position = [col, row]
         self.update_cursor_and_blink()
 
@@ -256,7 +257,7 @@ class PiFaceCADEmulatorWindow(QMainWindow, Ui_pifaceCADEmulatorWindow):
         col, row = self._cursor_position
         if self._is_wrap_around():
             # add the difference to the column to shift it
-            col = LCD_RAM_WIDTH - self.viewport_corner
+            col = LCD_ROW_WIDTH - self.viewport_corner
         else:
             col -= self.viewport_corner
         return col, row
@@ -265,7 +266,7 @@ class PiFaceCADEmulatorWindow(QMainWindow, Ui_pifaceCADEmulatorWindow):
         col, row = self._cursor_position
         # print("vpc-col", self.viewport_corner-col)
         # print("threshold", LCD_RAM_WIDTH-LCD_WIDTH)
-        return (self.viewport_corner - col) > (LCD_RAM_WIDTH - LCD_WIDTH)
+        return (self.viewport_corner - col) > (LCD_ROW_WIDTH - LCD_WIDTH)
 
     def _cursor_is_visible(self):
         cursor_on_screen = self._cursor_is_on_screen()
@@ -291,7 +292,7 @@ class PiFaceCADEmulatorWindow(QMainWindow, Ui_pifaceCADEmulatorWindow):
         too_far_right = col >= (self.viewport_corner + LCD_WIDTH)
         too_far_left = col < self.viewport_corner
         can_see_from_wrap_around = \
-            (LCD_RAM_WIDTH + col) < (self.viewport_corner + LCD_WIDTH)
+            (LCD_ROW_WIDTH + col) < (self.viewport_corner + LCD_WIDTH)
         # print("col", col)
         # print("too_far_right", too_far_right)
         # print("too_far_left{}, ({}, {})".format(too_far_left, col, row))
@@ -499,10 +500,10 @@ def run_emulator(
 
 
 def get_col_row_from_value(value):
-    row = int(value / LCD_RAM_WIDTH)
-    col = value - (LCD_RAM_WIDTH * row)
+    row = int(value / LCD_ROW_WIDTH)
+    col = value - (LCD_ROW_WIDTH * row)
     return col, row
 
 
 def get_value_from_col_row(col, row):
-    return col + (LCD_RAM_WIDTH * row)
+    return col + (LCD_ROW_WIDTH * row)

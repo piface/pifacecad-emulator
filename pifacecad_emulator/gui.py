@@ -39,15 +39,14 @@ class PiFaceCADEmulatorWindow(QMainWindow, Ui_pifaceCADEmulatorWindow):
         self._cursor_position = [0, 0]
         self.clear()
 
-        self.switch_buttons = [
-            self.switch0Button,
-            self.switch1Button,
-            self.switch2Button,
-            self.switch3Button,
-            self.switch4Button,
-            self.switch5Button,
-            self.switch6Button,
-            self.switch7Button]
+        self.switch_buttons = [self.switch0Button,
+                               self.switch1Button,
+                               self.switch2Button,
+                               self.switch3Button,
+                               self.switch4Button,
+                               self.switch5Button,
+                               self.switch6Button,
+                               self.switch7Button]
 
         for button in self.switch_buttons:
             button.pressed.connect(self.switch_pressed)
@@ -338,15 +337,24 @@ class PiFaceCADEmulatorWindow(QMainWindow, Ui_pifaceCADEmulatorWindow):
         if message is None:
             message = self.writeMessageLineEdit.text()
         # print("Writing message:", message)
-        new_line = "\\n"
         col, row = self.get_cursor()
-        new_row = 0
-        for i, line in enumerate(message.split(new_line)):
-            self.lcd_lines[i+row] = "{}{}{}".format(
-                self.lcd_lines[i+row][:col],
-                line,
-                self.lcd_lines[i+row][col+len(line):])
-            new_row = row + i
+        lines = message.split("\\n")
+
+        # first row
+        pre = self.lcd_lines[row][:col]
+        new_col = col + len(lines[0])
+        post = self.lcd_lines[row][new_col:]
+        self.lcd_lines[row] = "{}{}{}".format(pre, lines[0], post)
+        new_row = row
+
+        # second row
+        if len(lines) > 1:
+            col = 0  # new line starts from the beginning
+            new_col = col+len(lines[1])
+            new_row = 1
+            #pre = self.lcd_lines[1][:col]
+            post = self.lcd_lines[new_row][new_col:]
+            self.lcd_lines[new_row] = "{}{}".format(lines[1], post)
 
         self.flush_lcd_lines()
         if self.cad:
@@ -354,7 +362,8 @@ class PiFaceCADEmulatorWindow(QMainWindow, Ui_pifaceCADEmulatorWindow):
             col, row = self.cad.lcd.get_cursor()
             self._set_virtual_cursor(col, row)
         else:
-            self._set_virtual_cursor(col+len(line), new_row)
+            print("setting vc, col {}, row {}".format(new_col, new_row))
+            self._set_virtual_cursor(new_col, new_row)
 
     def flush_lcd_lines(self):
         start = self.viewport_corner

@@ -20,8 +20,8 @@ class Switch(object):
 
     @property
     def value(self):
-        cad.proc_comms_q_to_em.put(('get_switch', self.switch_num))
-        return cad.proc_comms_q_from_em.get()
+        self.cad.proc_comms_q_to_em.put(('get_switch', self.switch_num))
+        return self.cad.proc_comms_q_from_em.get()
 
 
 class SwitchPort(object):
@@ -123,12 +123,14 @@ class PiFaceCAD(object):
     """An emulated PiFace CAD."""
     def __init__(self):
         self.switch_port = SwitchPort(self)
-        self.switches = [Switch(i, self) for i in range(pifacecad.NUM_SWITCHES)]
+        self.switches = [Switch(i, self)
+                         for i in range(pifacecad.NUM_SWITCHES)]
         self.lcd = PiFaceLCD(self)
 
         try:
             cad = pifacecad.PiFaceCAD()
-        except pifacecommon.spi.SPIInitError as e:
+        except (pifacecommon.spi.SPIInitError,
+                pifacecad.core.NoPiFaceCADDetectedError) as e:
             print("Error initialising PiFace CAD: ", e)
             print("Running without PiFace CAD.")
             cad = None
@@ -177,9 +179,12 @@ class IREventListener(object):
 #     emulator_sync = Barrier(2)
 #     # start the gui in another process
 #     global emulator
-#     emulator = Process(target=run_emulator, args=(
-#         sys.argv, cad, proc_comms_q_to_em, proc_comms_q_from_em, emulator_sync
-#     ))
+#     emulator = Process(target=run_emulator,
+#                        args=(sys.argv,
+#                              cad,
+#                              proc_comms_q_to_em,
+#                              proc_comms_q_from_em,
+#                              emulator_sync))
 #     emulator.start()
 #     # print("core: waiting for sync")
 #     # # emulator_sync.wait()

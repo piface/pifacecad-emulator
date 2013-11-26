@@ -1,6 +1,10 @@
 from PySide.QtCore import (QThread, QObject, Slot, Signal)
 from PySide.QtGui import (
-    QMainWindow, QPushButton, QApplication, QPainter, QFont
+    QMainWindow,
+    QPushButton,
+    QApplication,
+    QPainter,
+    QFont
 )
 from time import sleep
 import threading
@@ -14,8 +18,8 @@ from .watchers import (
 import pifacecad
 
 
-COL_PIXEL = (
-    39, 49, 59, 69, 79, 89, 99, 109, 119, 129, 139, 149, 159, 169, 179, 189)
+COL_PIXEL = (39, 49, 59, 69, 79, 89, 99, 109, 119, 129, 139, 149, 159,
+             169, 179, 189)
 ROW_PIXEL = (80, 101)
 
 LCD_LINES = 2
@@ -346,7 +350,7 @@ class PiFaceCADEmulatorWindow(QMainWindow, Ui_pifaceCADEmulatorWindow):
 
         self.flush_lcd_lines()
         if self.cad:
-            self.cad.lcd.write(message)
+            self.cad.lcd.write(message.replace("\\n", "\n"))
             col, row = self.cad.lcd.get_cursor()
             self._set_virtual_cursor(col, row)
         else:
@@ -469,7 +473,7 @@ def run_emulator(
     #sync
     emu_window.display_on()
     emu_window.cursor_on()
-    emu_window.backlight_on()
+    emu_window.backlight_off()
     emu_window.blink_on()
 
     start_interface_message_handler(

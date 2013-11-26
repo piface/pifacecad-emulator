@@ -20,3 +20,10 @@ Otherwise, use just like you would pifacecad:
     >>> import pifacecad_emulator
     >>> cad = pifacecad_emulator.PiFaceCAD()
     >>> cad.lcd.write("hello")
+
+
+Known Issues
+------------
+
+- New line character in write box does not cause new line.
+- New line state is not maintained between CAD and emulator.

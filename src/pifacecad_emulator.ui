@@ -6,7 +6,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>713</width>
+    <width>706</width>
     <height>209</height>
    </rect>
   </property>
@@ -36,7 +36,7 @@
     </property>
     <property name="geometry">
      <rect>
-      <x>250</x>
+      <x>240</x>
       <y>10</y>
       <width>451</width>
       <height>171</height>
@@ -271,7 +271,7 @@
      <rect>
       <x>10</x>
       <y>50</y>
-      <width>231</width>
+      <width>221</width>
       <height>101</height>
      </rect>
     </property>
@@ -279,13 +279,13 @@
      <string/>
     </property>
     <property name="pixmap">
-     <pixmap resource="pifacecad_emulator.qrc">:/images/lcd-GDM1602K.svg</pixmap>
+     <pixmap resource="pifacecad_emulator.qrc">:/images/lcd-GDM1602K-small2.png</pixmap>
     </property>
    </widget>
    <widget class="QWidget" name="horizontalLayoutWidget_4">
     <property name="geometry">
      <rect>
-      <x>10</x>
+      <x>0</x>
       <y>150</y>
       <width>231</width>
       <height>31</height>
@@ -347,7 +347,7 @@
    <widget class="QWidget" name="horizontalLayoutWidget_5">
     <property name="geometry">
      <rect>
-      <x>120</x>
+      <x>110</x>
       <y>20</y>
       <width>121</width>
       <height>31</height>
@@ -428,9 +428,9 @@
     <property name="geometry">
      <rect>
       <x>28</x>
-      <y>77</y>
-      <width>191</width>
-      <height>47</height>
+      <y>72</y>
+      <width>181</width>
+      <height>55</height>
      </rect>
     </property>
     <property name="autoFillBackground">
@@ -484,7 +484,7 @@
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>713</width>
+     <width>706</width>
      <height>22</height>
     </rect>
    </property>

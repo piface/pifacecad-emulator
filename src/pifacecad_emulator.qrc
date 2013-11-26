@@ -1,6 +1,8 @@
 <RCC>
   <qresource>
+    <file>../images/lcd-GDM1602K-small2.png</file>
     <file>../images/rpLCD.svg</file>
     <file>../images/lcd-GDM1602K.svg</file>
+    <file>../images/lcd-GDM1602K-small.png</file>
   </qresource>
 </RCC>
